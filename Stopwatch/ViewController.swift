@@ -20,7 +20,7 @@ class ViewController: UIViewController, UITableViewDelegate {
   @IBOutlet weak var playPauseButton: UIButton!
   @IBOutlet weak var lapRestButton: UIButton!
   @IBOutlet weak var lapsTableView: UITableView!
-  
+      
   // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -51,12 +51,13 @@ class ViewController: UIViewController, UITableViewDelegate {
   override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
     return UIInterfaceOrientationMask.portrait
   }
+    
   
   // MARK: - Actions
   @IBAction func playPauseTimer(_ sender: AnyObject) {
     lapRestButton.isEnabled = true
   
-    changeButton(lapRestButton, title: "Lap", titleColor: UIColor.black)
+      changeButton(lapRestButton, title: "Lap", titleColor: UIColor.black, identifier: "lapBtn")
     
     if !isPlay {
       unowned let weakSelf = self
@@ -68,14 +69,14 @@ class ViewController: UIViewController, UITableViewDelegate {
       RunLoop.current.add(lapStopwatch.timer, forMode: RunLoop.Mode.common)
       
       isPlay = true
-      changeButton(playPauseButton, title: "Stop", titleColor: UIColor.red)
+      changeButton(playPauseButton, title: "Stop", titleColor: UIColor.red, identifier: "stopBtn")
     } else {
       
       mainStopwatch.timer.invalidate()
       lapStopwatch.timer.invalidate()
       isPlay = false
-      changeButton(playPauseButton, title: "Start", titleColor: UIColor.green)
-      changeButton(lapRestButton, title: "Reset", titleColor: UIColor.black)
+      changeButton(playPauseButton, title: "Start", titleColor: UIColor.green, identifier: "startBtn")
+      changeButton(lapRestButton, title: "Reset", titleColor: UIColor.black, identifier: "resetBtn")
     }
   }
   
@@ -83,7 +84,7 @@ class ViewController: UIViewController, UITableViewDelegate {
     if !isPlay {
       resetMainTimer()
       resetLapTimer()
-      changeButton(lapRestButton, title: "Lap", titleColor: UIColor.lightGray)
+        changeButton(lapRestButton, title: "Lap", titleColor: UIColor.lightGray, identifier: "lapBtn")
       lapRestButton.isEnabled = false
     } else {
       if let timerLabelText = timerLabel.text {
@@ -98,8 +99,9 @@ class ViewController: UIViewController, UITableViewDelegate {
   }
   
   // MARK: - Private Helpers
-  fileprivate func changeButton(_ button: UIButton, title: String, titleColor: UIColor) {
+    fileprivate func changeButton(_ button: UIButton, title: String, titleColor: UIColor, identifier: String) {
     button.setTitle(title, for: UIControl.State())
+    button.accessibilityIdentifier = identifier
     button.setTitleColor(titleColor, for: UIControl.State())
   }
   
@@ -153,6 +155,7 @@ extension ViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let identifier: String = "lapCell"
     let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+      cell.accessibilityIdentifier = "lapRow"
 
     if let labelNum = cell.viewWithTag(11) as? UILabel {
       labelNum.text = "Lap \(laps.count - (indexPath as NSIndexPath).row)"
